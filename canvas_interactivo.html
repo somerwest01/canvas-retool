@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas interactivo</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <h2>Haz clic para dibujar líneas</h2>
+  <canvas id="drawingCanvas" width="600" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    let points = [];
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      points.push({ x, y });
+
+      if (points.length >= 2) {
+        const p1 = points[points.length - 2];
+        const p2 = points[points.length - 1];
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      // Si se usa dentro de Retool, enviar puntos al modelo
+      if (window.Retool) {
+        window.Retool.modelUpdate({ points });
+      }
+    });
+  </script>
+</body>
+</html>
